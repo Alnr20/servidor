@@ -29,7 +29,7 @@ def generate_token(username,userid):
     }
     return jwt.encode(payload, SECRET_KEY, algorithm= 'HS256')
 #Middleware para validar o token JWT
-def token_requerido(f)
+def token_requerido(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
@@ -40,3 +40,10 @@ def token_requerido(f)
 
         if not token:
             return jsonify({"mensagem": "Token é necessario"})
+        
+        try:
+            # Descondificando e validando o token 
+            dados = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            request.userid = dados["userid"]
+        except jwt.ExpiredSignatureError:
+            return
