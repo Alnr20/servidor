@@ -46,4 +46,34 @@ def token_requerido(f):
             dados = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
             request.userid = dados["userid"]
         except jwt.ExpiredSignatureError:
-            return
+            return jsonify({mensagem: "Token expirado"})
+        except jwt.InvalidTokenError:
+            returnjsonify({"mensagem": "Token invalido"})
+        
+        return f(*args, **kwargs)
+
+    return decorated
+
+# rota protegida (domente acessivel com o token válido)
+@app.route('/protegido',methods=['POST'])
+def register_user():
+    data = request.get_json()
+    username = data.get('username')
+    email= data.get('email')
+    password = data.get('password')
+
+    if not username or not email or not password:
+       return jsonify({'error': 'Username,email and password are required'}) #, 400
+
+    # hash da senha antes de salvar no db
+    hashed_password = generate_password_hash(password)
+
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('INSERT INTO users (username, email,password) VALUES (?, ?, ?)',
+                   (username, email, hashed_password))
+    db.comit()
+
+    return jsonify({'id': cursor.lastrowid, 'username':username, 'email':email}) #,200 
+
+
