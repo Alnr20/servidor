@@ -35,4 +35,17 @@ def login():
 def dashboard():
 
     if 'username' in session:
+        return f'Bem vindo Pagina dashboard,{session["username"]}'
+    else:
+        flash('Primeiro vc tem que fazer o login')
+        return redirect(url_for('login'))
+    
+@app.route('/logout')
+def  logout:
+     session.pop('username',None)
+     flash('Voce foi deslogado!!!')
+     return redirect(url_for('home'))
+
+if __name__ == '_main_':
+    app.rum(debug=True)
 
