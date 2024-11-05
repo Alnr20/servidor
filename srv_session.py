@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect,session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 app = Flask(__name__)
 
@@ -41,11 +41,11 @@ def dashboard():
         return redirect(url_for('login'))
     
 @app.route('/logout')
-def  logout:
-     session.pop('username',None)
-     flash('Voce foi deslogado!!!')
-     return redirect(url_for('home'))
+def logout():
+    session.pop('username',None)
+    flash('Voce foi deslogado!!!')
+    return redirect(url_for('home'))
 
-if __name__ == '_main_':
-    app.rum(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
 
